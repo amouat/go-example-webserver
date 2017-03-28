@@ -4,7 +4,11 @@ pipeline:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker build -t amouat/example-webserver:$DRONE_COMMIT_SHA .
+      - docker build \
+         --label org.label-schema.vcs-ref=$DRONE_COMMIT_SHA \
+         --label build-number=$DRONE_BUILD_NUMBER \
+         --label build-date="$(date)" \
+         -t amouat/example-webserver:$DRONE_COMMIT_SHA .
 
   test:
     image: docker
@@ -29,5 +33,5 @@ pipeline:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker pull amouat/example-webserver:$DRONE_COMMIT_SHA
-      - docker tag amouat/example-webserver:$DRONE_COMMIT_SHA amouat/example-webserver:latest
+      - docker tag amouat/example-webserver:$DRONE_COMMIT_SHA amouat/example-webserver:production
       - docker stack deploy -c ./docker-compose.yml example-webserver
