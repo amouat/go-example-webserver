@@ -17,6 +17,8 @@ pipeline:
     image: docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - PASS=${HUB_PASS}
     commands:
-      - docker login -u amouat -p ${HUB_PASS}
+      - docker login -u amouat -p $PASS
       - docker push amouat/example-webserver
