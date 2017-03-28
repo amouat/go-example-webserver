@@ -15,7 +15,7 @@ fi
 
 kill $ID
 
-if [ "$tests_passed" == "true" ]; then
+if [ "$tests_passed"=="true" ]; then
   echo "Passed Tests"
 else 
   echo "Failed Tests"
