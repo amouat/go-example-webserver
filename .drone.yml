@@ -4,14 +4,14 @@ pipeline:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker build -t amouat/example-webserver .
+      - docker build -t amouat/example-webserver:$DRONE_COMMIT_SHA .
 
   test:
     image: docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker run amouat/example-webserver /test.sh
+      - docker run amouat/example-webserver:$DRONE_COMMIT_SHA /test.sh
 
   push:
     image: docker
@@ -21,12 +21,13 @@ pipeline:
       - PASS=${HUB_PASS}
     commands:
       - docker login -u amouat -p $PASS
-      - docker push amouat/example-webserver
+      - docker push amouat/example-webserver:$DRONE_COMMIT_SHA
 
   deploy:
     image: docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker pull amouat/example-webserver
+      - docker pull amouat/example-webserver:$DRONE_COMMIT_SHA
+      - docker tag amouat/example-webserver:$DRONE_COMMIT_SHA amouat/example-webserver:latest
       - docker stack deploy -c ./docker-compose.yml example-webserver
