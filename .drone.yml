@@ -5,3 +5,16 @@ pipeline:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker build -t amouat/example-webserver .
+
+  test:
+    image: docker
+    commands:
+      - docker run amouat/example-webserver /test.sh
+
+  push:
+    image: docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - docker login -u amouat -p ${HUB_PASS}
+      - docker push amouat/example-webserver
